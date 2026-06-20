@@ -1,0 +1,30 @@
+{
+  "name": "feature-flag-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LaunchDarkly-style feature flag platform with API, dashboard and TypeScript SDK.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build -w packages/shared && concurrently -n api,dashboard -c cyan,magenta \"npm run dev -w apps/api\" \"npm run dev -w apps/dashboard\"",
+    "build": "npm run build -w packages/shared && npm run build -w packages/sdk && npm run build -w apps/api && npm run build -w apps/dashboard",
+    "test": "npm run build -w packages/shared && npm run test -w packages/shared && npm run test -w packages/sdk",
+    "typecheck": "npm run build -w packages/shared && npm run typecheck -w apps/dashboard && npm run typecheck -w apps/api && npm run typecheck -w packages/sdk && npm run typecheck -w packages/shared",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down -v"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

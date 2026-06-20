@@ -1,0 +1,17 @@
+FROM node:22-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
+COPY apps/dashboard/package.json apps/dashboard/package.json
+COPY packages/shared/package.json packages/shared/package.json
+RUN npm install
+
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV VITE_API_URL=http://localhost:4000
+RUN npm run build -w packages/shared && npm run build -w apps/dashboard
+
+FROM nginx:1.27-alpine AS runtime
+COPY --from=build /app/apps/dashboard/dist /usr/share/nginx/html
+EXPOSE 80
